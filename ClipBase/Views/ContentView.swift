@@ -8,14 +8,84 @@ struct ContentView: View {
 
     @State private var viewModel = VideoBookmarkViewModel()
     @State private var selectedBookmark: VideoBookmark?
+    @State private var showingSettings = false
+    @State private var gridMode = 0  // 0: 3列, 1: 4列, 2: 5列
+    @State private var sortAscending = false
 
-    private let columns = [
-        GridItem(.adaptive(minimum: 100, maximum: 150), spacing: 4)
-    ]
+    private var columns: [GridItem] {
+        switch gridMode {
+        case 1:
+            // 4カラム
+            return [GridItem(.adaptive(minimum: 80, maximum: 100), spacing: 4)]
+        case 2:
+            // 5カラム
+            return [GridItem(.adaptive(minimum: 60, maximum: 80), spacing: 4)]
+        default:
+            // 3カラム
+            return [GridItem(.adaptive(minimum: 100, maximum: 150), spacing: 4)]
+        }
+    }
+
+    private var gridIcon: String {
+        switch gridMode {
+        case 1: return "square.grid.3x3"
+        case 2: return "square.grid.3x3.fill"
+        default: return "square.grid.2x2"
+        }
+    }
+
+    private var sortedBookmarks: [VideoBookmark] {
+        if sortAscending {
+            return bookmarks.reversed()
+        } else {
+            return Array(bookmarks)
+        }
+    }
 
     var body: some View {
         NavigationStack {
             ScrollView {
+                // Search bar + Sort/Grid controls
+                HStack(spacing: 8) {
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(.secondary)
+                        TextField("Search videos", text: $viewModel.searchText)
+                    }
+                    .padding(8)
+                    .background(Color(.systemGray6))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                    // Sort toggle
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            sortAscending.toggle()
+                        }
+                    } label: {
+                        Image(systemName: sortAscending ? "arrow.up" : "arrow.down")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 36, height: 36)
+                            .background(Color(.systemGray6))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+
+                    // Grid toggle (3列 → 4列 → 5列 → 3列...)
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            gridMode = (gridMode + 1) % 3
+                        }
+                    } label: {
+                        Image(systemName: gridIcon)
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 36, height: 36)
+                            .background(Color(.systemGray6))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                }
+                .padding(.horizontal)
+
                 // Tag filter
                 if !tags.isEmpty {
                     TagFilterBar(tags: tags, selectedTag: $viewModel.selectedTag)
@@ -24,8 +94,8 @@ struct ContentView: View {
 
                 // Video grid
                 LazyVGrid(columns: columns, spacing: 4) {
-                    ForEach(viewModel.filteredBookmarks(bookmarks)) { bookmark in
-                        ThumbnailCell(bookmark: bookmark)
+                    ForEach(viewModel.filteredBookmarks(sortedBookmarks)) { bookmark in
+                        ThumbnailCell(bookmark: bookmark, showTitle: gridMode == 0)
                             .onTapGesture {
                                 selectedBookmark = bookmark
                             }
@@ -40,17 +110,22 @@ struct ContentView: View {
                 }
                 .padding(4)
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("ClipStocker")
-            .searchable(text: $viewModel.searchText, prompt: "Search videos")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showingSettings = true
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
+                    }
+                }
+                ToolbarItemGroup(placement: .topBarTrailing) {
                     Button {
                         viewModel.showingTagManager = true
                     } label: {
                         Image(systemName: "tag")
                     }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         viewModel.showingAddSheet = true
                     } label: {
@@ -66,6 +141,9 @@ struct ContentView: View {
             }
             .sheet(item: $selectedBookmark) { bookmark in
                 VideoDetailView(bookmark: bookmark)
+            }
+            .sheet(isPresented: $showingSettings) {
+                SettingsView()
             }
         }
     }

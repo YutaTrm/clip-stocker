@@ -2,12 +2,14 @@ import SwiftUI
 
 struct ThumbnailCell: View {
     @Bindable var bookmark: VideoBookmark
+    var showTitle: Bool = true
     @State private var thumbnailImage: UIImage?
     @State private var isLoading = true
+    @State private var cachedImage: UIImage?
 
     var body: some View {
         ZStack {
-            if let image = thumbnailImage ?? loadedImage {
+            if let image = thumbnailImage ?? cachedImage {
                 // アスペクト比を維持しながらフレームを埋める（CSS background-size: cover と同じ）
                 Color.clear
                     .aspectRatio(9/16, contentMode: .fit)
@@ -50,7 +52,7 @@ struct ThumbnailCell: View {
                 Spacer()
 
                 // タイトル（下部オーバーレイ）
-                if let title = displayTitle {
+                if showTitle, let title = displayTitle {
                     Text(title)
                         .font(.caption2)
                         .fontWeight(.medium)
@@ -73,7 +75,17 @@ struct ThumbnailCell: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .contentShape(Rectangle()) // タップ領域を全体に拡張
         .task {
+            // 既存のサムネイルデータからキャッシュ画像を生成
+            if cachedImage == nil, let data = bookmark.thumbnailData {
+                cachedImage = UIImage(data: data)
+            }
             await loadThumbnail()
+        }
+        .onChange(of: bookmark.thumbnailData) { _, newData in
+            // サムネイルデータが更新されたらキャッシュを更新
+            if let data = newData {
+                cachedImage = UIImage(data: data)
+            }
         }
     }
 
@@ -86,12 +98,6 @@ struct ThumbnailCell: View {
             return title
         }
         return nil
-    }
-
-    // bookmark.thumbnailData から直接読み込み（更新を反映）
-    private var loadedImage: UIImage? {
-        guard let data = bookmark.thumbnailData else { return nil }
-        return UIImage(data: data)
     }
 
     private var platformGradient: LinearGradient {

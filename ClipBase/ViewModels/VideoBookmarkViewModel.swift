@@ -49,6 +49,6 @@ final class VideoBookmarkViewModel {
             result = result.filter { $0.tags.contains { $0.id == tag.id } }
         }
 
-        return result.sorted { $0.createdAt > $1.createdAt }
+        return result
     }
 }
