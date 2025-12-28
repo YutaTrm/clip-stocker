@@ -137,12 +137,6 @@ struct ThumbnailCell: View {
             return
         }
 
-        // Instagram/Twitterはサムネイル取得不可なのでスキップ
-        if bookmark.platform == .instagram || bookmark.platform == .twitter {
-            isLoading = false
-            return
-        }
-
         let metadata = await ThumbnailService.shared.fetchMetadata(for: bookmark)
         if let data = metadata.thumbnailData, let image = UIImage(data: data) {
             thumbnailImage = image

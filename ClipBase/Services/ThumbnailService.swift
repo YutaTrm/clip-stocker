@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import LinkPresentation
 
 struct VideoMetadata {
     let title: String?
@@ -101,29 +102,61 @@ actor ThumbnailService {
     // MARK: - Instagram
 
     private func fetchInstagramMetadata(_ videoURL: String) async -> VideoMetadata {
-        // Instagram's oEmbed API requires authentication
-        return VideoMetadata(title: nil, thumbnailData: nil)
+        return await fetchLinkMetadata(videoURL)
     }
 
     // MARK: - Twitter (X)
 
     private func fetchTwitterMetadata(_ videoURL: String) async -> VideoMetadata {
-        guard let encodedURL = videoURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-              let oembedURL = URL(string: "https://publish.twitter.com/oembed?url=\(encodedURL)") else {
+        return await fetchLinkMetadata(videoURL)
+    }
+
+    // MARK: - LPMetadataProvider (Instagram / Twitter)
+
+    private func fetchLinkMetadata(_ videoURL: String) async -> VideoMetadata {
+        guard let url = URL(string: videoURL) else {
             return VideoMetadata(title: nil, thumbnailData: nil)
         }
 
-        do {
-            let (data, _) = try await URLSession.shared.data(from: oembedURL)
-            let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        return await withCheckedContinuation { continuation in
+            let provider = LPMetadataProvider()
+            provider.startFetchingMetadata(for: url) { metadata, error in
+                Task {
+                    if let error = error {
+                        print("LPMetadataProvider error: \(error)")
+                        continuation.resume(returning: VideoMetadata(title: nil, thumbnailData: nil))
+                        return
+                    }
 
-            // oEmbed APIからツイートのテキストを取得（author_name も利用可能）
-            let authorName = json?["author_name"] as? String
-            // サムネイルはoEmbed APIでは取得できない
-            return VideoMetadata(title: authorName, thumbnailData: nil)
-        } catch {
-            print("Failed to fetch Twitter oEmbed: \(error)")
-            return VideoMetadata(title: nil, thumbnailData: nil)
+                    guard let metadata = metadata else {
+                        continuation.resume(returning: VideoMetadata(title: nil, thumbnailData: nil))
+                        return
+                    }
+
+                    let title = metadata.title
+
+                    // サムネイル画像を取得
+                    var thumbnailData: Data?
+                    if let imageProvider = metadata.imageProvider {
+                        thumbnailData = await self.loadImageData(from: imageProvider)
+                    }
+
+                    continuation.resume(returning: VideoMetadata(title: title, thumbnailData: thumbnailData))
+                }
+            }
+        }
+    }
+
+    private func loadImageData(from provider: NSItemProvider) async -> Data? {
+        return await withCheckedContinuation { continuation in
+            provider.loadObject(ofClass: UIImage.self) { image, error in
+                if let uiImage = image as? UIImage,
+                   let data = uiImage.jpegData(compressionQuality: 0.8) {
+                    continuation.resume(returning: data)
+                } else {
+                    continuation.resume(returning: nil)
+                }
+            }
         }
     }
 
