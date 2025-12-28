@@ -121,6 +121,12 @@ struct ThumbnailCell: View {
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
+        case .threads:
+            return LinearGradient(
+                colors: [.black, .gray.opacity(0.8)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
         case .unknown:
             return LinearGradient(
                 colors: [.gray, .gray.opacity(0.7)],

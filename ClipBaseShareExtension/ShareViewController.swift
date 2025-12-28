@@ -37,9 +37,13 @@ class ShareViewController: UIViewController {
             return
         }
 
+        // 全てのプロバイダーからURLを探す
+        var foundURL = false
+
         for provider in itemProviders {
             // URL として共有された場合
             if provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {
+                foundURL = true
                 provider.loadItem(forTypeIdentifier: UTType.url.identifier) { [weak self] item, error in
                     DispatchQueue.main.async {
                         if let url = item as? URL {
@@ -50,13 +54,19 @@ class ShareViewController: UIViewController {
                 }
                 return
             }
+        }
 
-            // テキストとして共有された場合（一部アプリはURLをテキストで共有）
+        // URLが見つからなかった場合、テキストを探す
+        for provider in itemProviders {
             if provider.hasItemConformingToTypeIdentifier(UTType.plainText.identifier) {
+                foundURL = true
                 provider.loadItem(forTypeIdentifier: UTType.plainText.identifier) { [weak self] item, error in
                     DispatchQueue.main.async {
-                        if let text = item as? String, let url = URL(string: text), url.scheme != nil {
-                            self?.saveBookmark(url: text)
+                        if let text = item as? String {
+                            // テキスト内からURLを抽出
+                            if let extractedURL = self?.extractURL(from: text) {
+                                self?.saveBookmark(url: extractedURL)
+                            }
                         }
                         self?.completeRequest()
                     }
@@ -65,7 +75,28 @@ class ShareViewController: UIViewController {
             }
         }
 
-        completeRequest()
+        if !foundURL {
+            completeRequest()
+        }
+    }
+
+    /// テキストからURLを抽出
+    private func extractURL(from text: String) -> String? {
+        // URLを直接パースできる場合
+        if let url = URL(string: text.trimmingCharacters(in: .whitespacesAndNewlines)),
+           url.scheme?.hasPrefix("http") == true {
+            return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        // テキスト内からURLを検出
+        let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        let range = NSRange(text.startIndex..., in: text)
+        if let match = detector?.firstMatch(in: text, options: [], range: range),
+           let url = match.url {
+            return url.absoluteString
+        }
+
+        return nil
     }
 
     private func saveBookmark(url: String) {

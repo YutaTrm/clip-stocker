@@ -6,6 +6,7 @@ enum Platform: String, Codable, CaseIterable {
     case tiktok = "TikTok"
     case instagram = "Instagram"
     case twitter = "X"
+    case threads = "Threads"
     case unknown = "Unknown"
 
     var iconName: String {
@@ -14,6 +15,7 @@ enum Platform: String, Codable, CaseIterable {
         case .tiktok: return "logo_tiktok"
         case .instagram: return "logo_instagram"
         case .twitter: return "logo_x"
+        case .threads: return "logo_threads"
         case .unknown: return "link"
         }
     }

@@ -39,6 +39,12 @@ struct URLParserService {
             return ParsedURL(platform: .twitter, videoId: videoId, originalURL: urlString)
         }
 
+        // Threads
+        if host.contains("threads.net") || host.contains("threads.com") {
+            let videoId = extractThreadsPostId(from: url)
+            return ParsedURL(platform: .threads, videoId: videoId, originalURL: urlString)
+        }
+
         return ParsedURL(platform: .unknown, videoId: nil, originalURL: urlString)
     }
 
@@ -96,6 +102,16 @@ struct URLParserService {
     private static func extractTwitterVideoId(from url: URL) -> String? {
         // x.com/{username}/status/{id} or twitter.com/{username}/status/{id}
         if let index = url.pathComponents.firstIndex(of: "status"),
+           index + 1 < url.pathComponents.count {
+            return url.pathComponents[index + 1]
+        }
+
+        return nil
+    }
+
+    private static func extractThreadsPostId(from url: URL) -> String? {
+        // threads.net/@username/post/POST_ID
+        if let index = url.pathComponents.firstIndex(of: "post"),
            index + 1 < url.pathComponents.count {
             return url.pathComponents[index + 1]
         }

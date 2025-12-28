@@ -25,6 +25,8 @@ actor ThumbnailService {
             return await fetchInstagramMetadata(bookmark.url)
         case .twitter:
             return await fetchTwitterMetadata(bookmark.url)
+        case .threads:
+            return await fetchThreadsMetadata(bookmark.url)
         case .unknown:
             return VideoMetadata(title: nil, thumbnailData: nil)
         }
@@ -111,7 +113,13 @@ actor ThumbnailService {
         return await fetchLinkMetadata(videoURL)
     }
 
-    // MARK: - LPMetadataProvider (Instagram / Twitter)
+    // MARK: - Threads
+
+    private func fetchThreadsMetadata(_ videoURL: String) async -> VideoMetadata {
+        return await fetchLinkMetadata(videoURL)
+    }
+
+    // MARK: - LPMetadataProvider (Instagram / Twitter / Threads)
 
     private func fetchLinkMetadata(_ videoURL: String) async -> VideoMetadata {
         guard let url = URL(string: videoURL) else {
