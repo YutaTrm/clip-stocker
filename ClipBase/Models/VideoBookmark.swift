@@ -10,12 +10,16 @@ enum Platform: String, Codable, CaseIterable {
 
     var iconName: String {
         switch self {
-        case .youtube: return "play.rectangle.fill"
-        case .tiktok: return "music.note"
-        case .instagram: return "camera.fill"
-        case .twitter: return "xmark"
+        case .youtube: return "logo_youtube"
+        case .tiktok: return "logo_tiktok"
+        case .instagram: return "logo_instagram"
+        case .twitter: return "logo_x"
         case .unknown: return "link"
         }
+    }
+
+    var isCustomIcon: Bool {
+        self != .unknown
     }
 }
 

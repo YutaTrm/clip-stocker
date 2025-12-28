@@ -26,14 +26,6 @@ struct ContentView: View {
         }
     }
 
-    private var gridIcon: String {
-        switch gridMode {
-        case 1: return "square.grid.3x3"
-        case 2: return "square.grid.3x3.fill"
-        default: return "square.grid.2x2"
-        }
-    }
-
     private var sortedBookmarks: [VideoBookmark] {
         if sortAscending {
             return bookmarks.reversed()
@@ -69,20 +61,6 @@ struct ContentView: View {
                             .background(Color(.systemGray6))
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
-
-                    // Grid toggle (3列 → 4列 → 5列 → 3列...)
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            gridMode = (gridMode + 1) % 3
-                        }
-                    } label: {
-                        Image(systemName: gridIcon)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundStyle(.secondary)
-                            .frame(width: 36, height: 36)
-                            .background(Color(.systemGray6))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
                 }
                 .padding(.horizontal)
 
@@ -111,6 +89,20 @@ struct ContentView: View {
                 .padding(4)
             }
             .scrollDismissesKeyboard(.interactively)
+            .simultaneousGesture(
+                MagnificationGesture()
+                    .onEnded { scale in
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            if scale > 1.3 && gridMode > 0 {
+                                // ピンチアウト（拡大）→ カラム数を減らす
+                                gridMode -= 1
+                            } else if scale < 0.7 && gridMode < 2 {
+                                // ピンチイン（縮小）→ カラム数を増やす
+                                gridMode += 1
+                            }
+                        }
+                    }
+            )
             .navigationTitle("ClipStocker")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -224,7 +216,14 @@ struct AddBookmarkSheet: View {
                     Section {
                         let parsed = URLParserService.parse(urlText)
                         HStack {
-                            Image(systemName: parsed.platform.iconName)
+                            if parsed.platform.isCustomIcon {
+                                Image(parsed.platform.iconName)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 20, height: 20)
+                            } else {
+                                Image(systemName: parsed.platform.iconName)
+                            }
                             Text(parsed.platform.rawValue)
                         }
                     } header: {

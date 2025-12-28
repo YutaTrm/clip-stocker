@@ -29,15 +29,10 @@ struct ThumbnailCell: View {
                             ProgressView()
                                 .tint(.white)
                         } else {
-                            VStack(spacing: 8) {
-                                Image(systemName: bookmark.platform.iconName)
-                                    .font(.system(size: 32))
-                                    .foregroundStyle(.white)
-                                Text(bookmark.platform.rawValue)
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                                    .foregroundStyle(.white.opacity(0.9))
-                            }
+                            Text(bookmark.platform.rawValue)
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.white.opacity(0.9))
                         }
                     }
             }
@@ -164,22 +159,20 @@ struct PlatformBadge: View {
     let platform: Platform
 
     var body: some View {
-        Image(systemName: platform.iconName)
-            .font(.caption)
-            .foregroundStyle(.white)
-            .padding(4)
-            .background(platformColor.opacity(0.8))
-            .clipShape(Circle())
-    }
-
-    private var platformColor: Color {
-        switch platform {
-        case .youtube: return .red
-        case .tiktok: return .black
-        case .instagram: return .purple
-        case .twitter: return .black
-        case .unknown: return .gray
+        Group {
+            if platform.isCustomIcon {
+                Image(platform.iconName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 14, height: 14)
+            } else {
+                Image(systemName: platform.iconName)
+                    .font(.system(size: 14))
+            }
         }
+        .padding(2)
+        .background(Color(.systemBackground).opacity(0.9))
+        .clipShape(Circle())
     }
 }
 
