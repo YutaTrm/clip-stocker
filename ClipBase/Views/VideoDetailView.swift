@@ -1,7 +1,6 @@
 import SwiftUI
 import SwiftData
 import WebKit
-import PhotosUI
 
 struct VideoDetailView: View {
     @Environment(\.dismiss) private var dismiss
@@ -15,7 +14,6 @@ struct VideoDetailView: View {
     @State private var showingTitleSheet = false
     @State private var showWebView = false
     @State private var isLoadingWeb = false
-    @State private var selectedPhoto: PhotosPickerItem?
 
     var body: some View {
         NavigationStack {
@@ -141,25 +139,6 @@ struct VideoDetailView: View {
                         }
                         .buttonStyle(.bordered)
 
-                        if bookmark.platform == .instagram || bookmark.platform == .twitter {
-                            if bookmark.thumbnailData != nil {
-                                Button(role: .destructive) {
-                                    bookmark.thumbnailData = nil
-                                    try? modelContext.save()
-                                } label: {
-                                    Label("Delete Thumbnail", systemImage: "photo.badge.minus")
-                                        .frame(maxWidth: .infinity)
-                                }
-                                .buttonStyle(.bordered)
-                            } else {
-                                PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                                    Label("Set Thumbnail", systemImage: "photo.badge.plus")
-                                        .frame(maxWidth: .infinity)
-                                }
-                                .buttonStyle(.bordered)
-                            }
-                        }
-
                         Button(role: .destructive) {
                             showingDeleteAlert = true
                         } label: {
@@ -194,28 +173,6 @@ struct VideoDetailView: View {
             } message: {
                 Text("Are you sure you want to delete this video?")
             }
-            .onChange(of: selectedPhoto) { _, newValue in
-                Task {
-                    if let data = try? await newValue?.loadTransferable(type: Data.self) {
-                        // 画像をリサイズして保存
-                        if let uiImage = UIImage(data: data) {
-                            let resized = resizeImage(uiImage, maxSize: 400)
-                            bookmark.thumbnailData = resized.jpegData(compressionQuality: 0.8)
-                            try? modelContext.save()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private func resizeImage(_ image: UIImage, maxSize: CGFloat) -> UIImage {
-        let ratio = min(maxSize / image.size.width, maxSize / image.size.height)
-        if ratio >= 1 { return image }
-        let newSize = CGSize(width: image.size.width * ratio, height: image.size.height * ratio)
-        let renderer = UIGraphicsImageRenderer(size: newSize)
-        return renderer.image { _ in
-            image.draw(in: CGRect(origin: .zero, size: newSize))
         }
     }
 
