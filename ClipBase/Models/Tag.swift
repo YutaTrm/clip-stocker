@@ -6,17 +6,20 @@ final class Tag {
     var id: UUID
     var name: String
     var colorHex: String
+    var sortOrder: Int = 0
     var bookmarks: [VideoBookmark]
 
     init(
         id: UUID = UUID(),
         name: String,
         colorHex: String = "#007AFF",
+        sortOrder: Int = 0,
         bookmarks: [VideoBookmark] = []
     ) {
         self.id = id
         self.name = name
         self.colorHex = colorHex
+        self.sortOrder = sortOrder
         self.bookmarks = bookmarks
     }
 }

@@ -4,7 +4,7 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \VideoBookmark.createdAt, order: .reverse) private var bookmarks: [VideoBookmark]
-    @Query private var tags: [Tag]
+    @Query(sort: \Tag.sortOrder) private var tags: [Tag]
 
     @State private var viewModel = VideoBookmarkViewModel()
     @State private var bookmarkForTagEdit: VideoBookmark?

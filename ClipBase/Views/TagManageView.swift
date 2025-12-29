@@ -4,7 +4,7 @@ import SwiftData
 struct TagManageView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Tag.name) private var tags: [Tag]
+    @Query(sort: \Tag.sortOrder) private var tags: [Tag]
 
     @State private var showingAddTag = false
     @State private var editingTag: Tag?
@@ -14,6 +14,9 @@ struct TagManageView: View {
             List {
                 ForEach(tags) { tag in
                     HStack {
+                        Image(systemName: "line.3.horizontal")
+                            .foregroundStyle(.tertiary)
+                            .font(.subheadline)
                         Circle()
                             .fill(Color(hex: tag.colorHex))
                             .frame(width: 16, height: 16)
@@ -29,6 +32,7 @@ struct TagManageView: View {
                     }
                 }
                 .onDelete(perform: deleteTags)
+                .onMove(perform: moveTags)
             }
             .navigationTitle("Tags")
             .navigationBarTitleDisplayMode(.inline)
@@ -68,11 +72,23 @@ struct TagManageView: View {
         }
         try? modelContext.save()
     }
+
+    private func moveTags(from source: IndexSet, to destination: Int) {
+        var sortedTags = tags.map { $0 }
+        sortedTags.move(fromOffsets: source, toOffset: destination)
+
+        // 並び順を更新
+        for (index, tag) in sortedTags.enumerated() {
+            tag.sortOrder = index
+        }
+        try? modelContext.save()
+    }
 }
 
 struct TagEditSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @Query(sort: \Tag.sortOrder) private var allTags: [Tag]
     @FocusState private var isFocused: Bool
 
     let tag: Tag?
@@ -143,7 +159,8 @@ struct TagEditSheet: View {
             tag.name = name
             tag.colorHex = selectedColor
         } else {
-            let newTag = Tag(name: name, colorHex: selectedColor)
+            let maxOrder = allTags.map { $0.sortOrder }.max() ?? -1
+            let newTag = Tag(name: name, colorHex: selectedColor, sortOrder: maxOrder + 1)
             modelContext.insert(newTag)
         }
         try? modelContext.save()
