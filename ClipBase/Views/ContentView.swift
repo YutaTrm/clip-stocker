@@ -7,7 +7,7 @@ struct ContentView: View {
     @Query private var tags: [Tag]
 
     @State private var viewModel = VideoBookmarkViewModel()
-    @State private var selectedBookmark: VideoBookmark?
+    @State private var bookmarkForTagEdit: VideoBookmark?
     @State private var showingSettings = false
     @State private var gridMode = 0  // 0: 3列, 1: 4列, 2: 5列
     @State private var sortAscending = false
@@ -75,9 +75,14 @@ struct ContentView: View {
                     ForEach(viewModel.filteredBookmarks(sortedBookmarks)) { bookmark in
                         ThumbnailCell(bookmark: bookmark, showTitle: gridMode == 0)
                             .onTapGesture {
-                                selectedBookmark = bookmark
+                                openInExternalApp(bookmark)
                             }
                             .contextMenu {
+                                Button {
+                                    bookmarkForTagEdit = bookmark
+                                } label: {
+                                    Label("Add Tags", systemImage: "tag")
+                                }
                                 Button(role: .destructive) {
                                     viewModel.deleteBookmark(bookmark, context: modelContext)
                                 } label: {
@@ -131,13 +136,82 @@ struct ContentView: View {
             .sheet(isPresented: $viewModel.showingTagManager) {
                 TagManageView()
             }
-            .sheet(item: $selectedBookmark) { bookmark in
-                VideoDetailView(bookmark: bookmark)
+            .sheet(item: $bookmarkForTagEdit) { bookmark in
+                QuickTagSheet(bookmark: bookmark, allTags: tags)
             }
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
             }
         }
+    }
+
+    private func openInExternalApp(_ bookmark: VideoBookmark) {
+        guard let webURL = URL(string: bookmark.url) else { return }
+
+        // YouTubeのみアプリで開く（他はブラウザ）
+        if bookmark.platform == .youtube {
+            let parsed = URLParserService.parse(bookmark.url)
+            if let videoId = parsed.videoId,
+               let appURL = URL(string: "youtube://watch?v=\(videoId)"),
+               UIApplication.shared.canOpenURL(appURL) {
+                UIApplication.shared.open(appURL)
+                return
+            }
+        }
+
+        // その他はブラウザで開く
+        UIApplication.shared.open(webURL)
+    }
+}
+
+struct QuickTagSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+
+    let bookmark: VideoBookmark
+    let allTags: [Tag]
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(allTags) { tag in
+                    let isSelected = bookmark.tags.contains { $0.id == tag.id }
+                    Button {
+                        toggleTag(tag, isSelected: isSelected)
+                    } label: {
+                        HStack {
+                            Circle()
+                                .fill(Color(hex: tag.colorHex))
+                                .frame(width: 12, height: 12)
+                            Text(tag.name)
+                            Spacer()
+                            if isSelected {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(.blue)
+                            }
+                        }
+                    }
+                    .foregroundStyle(.primary)
+                }
+            }
+            .navigationTitle("Select Tags")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+
+    private func toggleTag(_ tag: Tag, isSelected: Bool) {
+        if isSelected {
+            bookmark.tags.removeAll { $0.id == tag.id }
+        } else {
+            bookmark.tags.append(tag)
+        }
+        try? modelContext.save()
     }
 }
 

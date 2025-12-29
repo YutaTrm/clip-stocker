@@ -50,6 +50,7 @@
 		0E21327E2EFD424700107754 /* Exceptions for "ClipBase" folder in "ClipBaseShareExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Assets.xcassets,
 				Models/Tag.swift,
 				Models/VideoBookmark.swift,
 				Services/URLParserService.swift,
