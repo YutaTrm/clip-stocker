@@ -6,7 +6,7 @@ struct SplashView: View {
             Color(.systemBackground)
                 .ignoresSafeArea()
 
-            VStack(spacing: 16) {
+            VStack(spacing: 0) {
                 // AppIconImage が Assets にあれば表示、なければ代替アイコン
                 Group {
                     if let uiImage = UIImage(named: "AppIconImage") {

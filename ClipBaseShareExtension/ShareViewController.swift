@@ -308,8 +308,8 @@ struct TagChip: View {
                     .frame(width: 8, height: 8)
                 Text(tag.name)
                     .font(.subheadline)
-                    .lineLimit(1)
             }
+            .fixedSize()
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(isSelected ? Color(hex: tag.colorHex).opacity(0.3) : Color(.tertiarySystemBackground))

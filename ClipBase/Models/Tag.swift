@@ -34,9 +34,9 @@ extension Tag {
         "#5AC8FA", // Cyan
         "#007AFF", // Blue
         "#5856D6", // Purple
-        "#FF2D55", // Pink
-        "#FFFFFF", // White
+        "#FFCCD5", // Pink (lighter)
+        "#D1D1D6", // Light Gray
         "#8E8E93", // Gray
-        "#1C1C1E"  // Black
+        "#48484A"  // Dark Gray
     ]
 }

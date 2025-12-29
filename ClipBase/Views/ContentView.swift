@@ -254,6 +254,8 @@ struct TagFilterBar: View {
 }
 
 struct FilterChip: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let title: String
     var color: Color = .blue
     var colorHex: String = "#007AFF"
@@ -266,17 +268,9 @@ struct FilterChip: View {
 
     private var textColor: Color {
         if isSelected {
-            // 選択時: 背景色に応じて黒/白
             return isLightColor ? .black : .white
         } else {
-            // 非選択時: 白や明るい色は少し暗く、黒は少し明るく
-            if colorHex == "#FFFFFF" {
-                return Color(.systemGray)
-            } else if colorHex == "#1C1C1E" {
-                return Color(.systemGray)
-            } else {
-                return color
-            }
+            return color
         }
     }
 
@@ -284,14 +278,7 @@ struct FilterChip: View {
         if isSelected {
             return color
         } else {
-            // 白・黒は少し見やすく調整
-            if colorHex == "#FFFFFF" {
-                return Color(.systemGray5)
-            } else if colorHex == "#1C1C1E" {
-                return Color(.systemGray5)
-            } else {
-                return color.opacity(0.2)
-            }
+            return color.opacity(colorScheme == .light ? 0.3 : 0.2)
         }
     }
 
