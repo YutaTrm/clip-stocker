@@ -230,6 +230,7 @@ struct TagFilterBar: View {
                     FilterChip(
                         title: tag.name,
                         color: Color(hex: tag.colorHex),
+                        colorHex: tag.colorHex,
                         isSelected: selectedTag?.id == tag.id
                     ) {
                         selectedTag = selectedTag?.id == tag.id ? nil : tag
@@ -244,8 +245,44 @@ struct TagFilterBar: View {
 struct FilterChip: View {
     let title: String
     var color: Color = .blue
+    var colorHex: String = "#007AFF"
     let isSelected: Bool
     let action: () -> Void
+
+    private var isLightColor: Bool {
+        Color(hex: colorHex).isLight
+    }
+
+    private var textColor: Color {
+        if isSelected {
+            // 選択時: 背景色に応じて黒/白
+            return isLightColor ? .black : .white
+        } else {
+            // 非選択時: 白や明るい色は少し暗く、黒は少し明るく
+            if colorHex == "#FFFFFF" {
+                return Color(.systemGray)
+            } else if colorHex == "#1C1C1E" {
+                return Color(.systemGray)
+            } else {
+                return color
+            }
+        }
+    }
+
+    private var backgroundColor: Color {
+        if isSelected {
+            return color
+        } else {
+            // 白・黒は少し見やすく調整
+            if colorHex == "#FFFFFF" {
+                return Color(.systemGray5)
+            } else if colorHex == "#1C1C1E" {
+                return Color(.systemGray5)
+            } else {
+                return color.opacity(0.2)
+            }
+        }
+    }
 
     var body: some View {
         Button(action: action) {
@@ -253,8 +290,8 @@ struct FilterChip: View {
                 .font(.subheadline)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(isSelected ? color : color.opacity(0.2))
-                .foregroundStyle(isSelected ? .white : color)
+                .background(backgroundColor)
+                .foregroundStyle(textColor)
                 .clipShape(Capsule())
         }
     }
@@ -351,6 +388,17 @@ extension Color {
             blue: Double(b) / 255,
             opacity: Double(a) / 255
         )
+    }
+
+    /// 明るい色かどうか判定（輝度ベース）
+    var isLight: Bool {
+        guard let components = UIColor(self).cgColor.components else { return false }
+        let r = components[0]
+        let g = components.count > 1 ? components[1] : r
+        let b = components.count > 2 ? components[2] : r
+        // 輝度計算（YIQ式）
+        let luminance = (r * 299 + g * 587 + b * 114) / 1000
+        return luminance > 0.5
     }
 }
 

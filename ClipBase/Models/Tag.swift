@@ -29,10 +29,14 @@ extension Tag {
         "#FF3B30", // Red
         "#FF9500", // Orange
         "#FFCC00", // Yellow
+        "#8CC63F", // Yellow-Green
         "#34C759", // Green
+        "#5AC8FA", // Cyan
         "#007AFF", // Blue
         "#5856D6", // Purple
-        "#AF52DE", // Violet
-        "#FF2D55"  // Pink
+        "#FF2D55", // Pink
+        "#FFFFFF", // White
+        "#8E8E93", // Gray
+        "#1C1C1E"  // Black
     ]
 }

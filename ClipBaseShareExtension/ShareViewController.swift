@@ -348,4 +348,13 @@ extension Color {
             opacity: Double(a) / 255
         )
     }
+
+    var isLight: Bool {
+        guard let components = UIColor(self).cgColor.components else { return false }
+        let r = components[0]
+        let g = components.count > 1 ? components[1] : r
+        let b = components.count > 2 ? components[2] : r
+        let luminance = (r * 299 + g * 587 + b * 114) / 1000
+        return luminance > 0.5
+    }
 }
