@@ -8,7 +8,7 @@ struct ContentView: View {
 
     @State private var viewModel = VideoBookmarkViewModel()
     @State private var bookmarkForTagEdit: VideoBookmark?
-    @State private var showingSettings = false
+    @State private var showingMenu = false
     @State private var gridMode = 0  // 0: 3列, 1: 4列, 2: 5列
     @State private var sortAscending = false
 
@@ -37,38 +37,29 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                // Search bar + Sort/Grid controls
-                HStack(spacing: 8) {
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundStyle(.secondary)
-                        TextField("Search videos", text: $viewModel.searchText)
-                    }
-                    .padding(8)
-                    .background(Color(.systemGray6))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-
-                    // Sort toggle
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            sortAscending.toggle()
-                        }
-                    } label: {
-                        Image(systemName: sortAscending ? "arrow.up" : "arrow.down")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundStyle(.secondary)
-                            .frame(width: 36, height: 36)
-                            .background(Color(.systemGray6))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
-                }
-                .padding(.horizontal)
-
                 // Tag filter
                 if !tags.isEmpty {
                     TagFilterBar(tags: tags, selectedTag: $viewModel.selectedTag)
                         .padding(.horizontal)
                 }
+
+                // Count + Sort
+                HStack {
+                    Text("\(viewModel.filteredBookmarks(sortedBookmarks).count) videos")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button {
+                        sortAscending.toggle()
+                    } label: {
+                        Image(systemName: sortAscending ? "arrow.up" : "arrow.down")
+                            .font(.system(size: 14, weight: .medium))
+                            .contentTransition(.symbolEffect(.replace))
+                    }
+                    .tint(.primary)
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 4)
 
                 // Video grid
                 LazyVGrid(columns: columns, spacing: 4) {
@@ -112,7 +103,7 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        showingSettings = true
+                        showingMenu = true
                     } label: {
                         Image(systemName: "line.3.horizontal")
                     }
@@ -139,8 +130,28 @@ struct ContentView: View {
             .sheet(item: $bookmarkForTagEdit) { bookmark in
                 QuickTagSheet(bookmark: bookmark, allTags: tags)
             }
-            .sheet(isPresented: $showingSettings) {
-                SettingsView()
+            .sheet(isPresented: $showingMenu) {
+                MenuView()
+            }
+            .safeAreaInset(edge: .bottom) {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(.secondary)
+                    TextField("Search videos", text: $viewModel.searchText)
+                    if !viewModel.searchText.isEmpty {
+                        Button {
+                            viewModel.searchText = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                        }
+                        .tint(.primary)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(.ultraThinMaterial)
+                .clipShape(Capsule())
+                .padding(.horizontal, 80)
             }
         }
     }

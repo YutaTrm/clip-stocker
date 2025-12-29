@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SettingsView: View {
+struct MenuView: View {
     @Environment(\.dismiss) private var dismiss
 
     private var appVersion: String {
@@ -29,7 +29,7 @@ struct SettingsView: View {
                     Text("About")
                 }
             }
-            .navigationTitle("Settings")
+            .navigationTitle("Menu")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -43,5 +43,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView()
+    MenuView()
 }
