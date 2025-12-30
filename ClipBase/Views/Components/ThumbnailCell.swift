@@ -3,6 +3,7 @@ import SwiftUI
 struct ThumbnailCell: View {
     @Bindable var bookmark: VideoBookmark
     var showTitle: Bool = true
+    var isLocked: Bool = false
     @State private var thumbnailImage: UIImage?
     @State private var isLoading = true
     @State private var cachedImage: UIImage?
@@ -65,6 +66,14 @@ struct ThumbnailCell: View {
                             )
                         )
                 }
+            }
+
+            // ロック時のオーバーレイ
+            if isLocked {
+                Color.black.opacity(0.5)
+                Image(systemName: "lock.fill")
+                    .font(.title2)
+                    .foregroundStyle(.white)
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: 8))

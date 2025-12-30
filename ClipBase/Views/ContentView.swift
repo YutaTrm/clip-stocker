@@ -40,6 +40,15 @@ struct ContentView: View {
         }
     }
 
+    // 無料プランの制限
+    private let freeLimit = 30
+
+    /// 追加日時順で最新N件のIDセット（ロック解除対象）
+    private var unlockedBookmarkIDs: Set<UUID> {
+        // bookmarksは@Queryで createdAt descending でソートされているので、先頭から取得
+        Set(bookmarks.prefix(freeLimit).map { $0.id })
+    }
+
     /// グリッドに表示するアイテム（ブックマーク + 広告）
     private var gridItems: [GridItem_] {
         let filtered = viewModel.filteredBookmarks(sortedBookmarks)
@@ -105,9 +114,12 @@ struct ContentView: View {
                     ForEach(gridItems) { item in
                         switch item {
                         case .bookmark(let bookmark):
-                            ThumbnailCell(bookmark: bookmark, showTitle: gridMode == 0)
+                            let isLocked = !unlockedBookmarkIDs.contains(bookmark.id)
+                            ThumbnailCell(bookmark: bookmark, showTitle: gridMode == 0, isLocked: isLocked)
                                 .onTapGesture {
-                                    openInExternalApp(bookmark)
+                                    if !isLocked {
+                                        openInExternalApp(bookmark)
+                                    }
                                 }
                                 .contextMenu {
                                     Button {

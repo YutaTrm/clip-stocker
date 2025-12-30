@@ -8,6 +8,14 @@ struct TagManageView: View {
 
     @State private var showingAddTag = false
     @State private var editingTag: Tag?
+    @State private var showingLimitAlert = false
+
+    // 無料プランの制限
+    private let freeTagLimit = 5
+
+    private var isTagLimitReached: Bool {
+        tags.count >= freeTagLimit
+    }
 
     var body: some View {
         NavigationStack {
@@ -42,7 +50,11 @@ struct TagManageView: View {
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        showingAddTag = true
+                        if isTagLimitReached {
+                            showingLimitAlert = true
+                        } else {
+                            showingAddTag = true
+                        }
                     } label: {
                         Image(systemName: "plus")
                     }
@@ -53,6 +65,11 @@ struct TagManageView: View {
             }
             .sheet(item: $editingTag) { tag in
                 TagEditSheet(tag: tag)
+            }
+            .alert("Tag Limit Reached", isPresented: $showingLimitAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Free plan allows up to \(freeTagLimit) tags. Upgrade to Pro for unlimited tags.")
             }
             .overlay {
                 if tags.isEmpty {
