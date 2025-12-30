@@ -11,8 +11,8 @@ struct ContentView: View {
     @State private var viewModel = VideoBookmarkViewModel()
     @State private var bookmarkForTagEdit: VideoBookmark?
     @State private var showingMenu = false
-    @State private var gridMode = 0  // 0: 3列, 1: 4列, 2: 5列
-    @State private var sortAscending = false
+    @AppStorage("gridMode") private var gridMode = 0  // 0: 3列, 1: 4列, 2: 5列
+    @AppStorage("sortAscending") private var sortAscending = false
 
     // 広告
     private var adManager = AdManager.shared
