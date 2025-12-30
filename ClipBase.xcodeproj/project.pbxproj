@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0E2132742EFD3E4E00107754 /* ClipBaseShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0E21326A2EFD3E4E00107754 /* ClipBaseShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		0E6EAABF2F038CF300C2555B /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 0E6EAABE2F038CF300C2555B /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,12 +59,20 @@
 			);
 			target = 0E2132692EFD3E4E00107754 /* ClipBaseShareExtension */;
 		};
+		0E6EAABD2F038CB500C2555B /* Exceptions for "ClipBase" folder in "ClipBase" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 0E21321B2EFD34C200107754 /* ClipBase */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		0E21321E2EFD34C200107754 /* ClipBase */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				0E6EAABD2F038CB500C2555B /* Exceptions for "ClipBase" folder in "ClipBase" target */,
 				0E21327E2EFD424700107754 /* Exceptions for "ClipBase" folder in "ClipBaseShareExtension" target */,
 			);
 			path = ClipBase;
@@ -84,6 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E6EAABF2F038CF300C2555B /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,6 +147,7 @@
 			);
 			name = ClipBase;
 			packageProductDependencies = (
+				0E6EAABE2F038CF300C2555B /* GoogleMobileAds */,
 			);
 			productName = ClipBase;
 			productReference = 0E21321C2EFD34C200107754 /* ClipBase.app */;
@@ -191,6 +202,9 @@
 			);
 			mainGroup = 0E2132132EFD34C200107754;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				0E6EAABC2F03876200C2555B /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0E21321D2EFD34C200107754 /* Products */;
 			projectDirPath = "";
@@ -376,7 +390,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5B645QQY58;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ClipBase/Info.plist;
 				INFOPLIST_KEY_CFBundleDevelopmentRegion = en;
 				INFOPLIST_KEY_CFBundleDisplayName = ClipStocker;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -414,7 +429,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5B645QQY58;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ClipBase/Info.plist;
 				INFOPLIST_KEY_CFBundleDevelopmentRegion = en;
 				INFOPLIST_KEY_CFBundleDisplayName = ClipStocker;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -531,6 +547,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0E6EAABC2F03876200C2555B /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.14.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0E6EAABE2F038CF300C2555B /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0E6EAABC2F03876200C2555B /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0E2132142EFD34C200107754 /* Project object */;
 }

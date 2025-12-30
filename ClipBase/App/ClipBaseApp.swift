@@ -1,12 +1,16 @@
 import SwiftUI
 import SwiftData
 import WebKit
+import GoogleMobileAds
 
 @main
 struct ClipBaseApp: App {
     @State private var showSplash = true
 
     init() {
+        // AdMob SDK を初期化
+        AdManager.shared.configure()
+
         // WebKit をバックグラウンドでプリロード（初回表示の遅延を解消）
         DispatchQueue.main.async {
             _ = WKWebView()

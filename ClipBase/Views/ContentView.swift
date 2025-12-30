@@ -1,5 +1,7 @@
 import SwiftUI
 import SwiftData
+import GoogleMobileAds
+import UIKit
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
@@ -11,6 +13,10 @@ struct ContentView: View {
     @State private var showingMenu = false
     @State private var gridMode = 0  // 0: 3列, 1: 4列, 2: 5列
     @State private var sortAscending = false
+
+    // 広告
+    private var adManager = AdManager.shared
+    private let adInterval = 8 // 広告を挿入する間隔
 
     private var columns: [GridItem] {
         switch gridMode {
@@ -31,6 +37,39 @@ struct ContentView: View {
             return bookmarks.reversed()
         } else {
             return Array(bookmarks)
+        }
+    }
+
+    /// グリッドに表示するアイテム（ブックマーク + 広告）
+    private var gridItems: [GridItem_] {
+        let filtered = viewModel.filteredBookmarks(sortedBookmarks)
+        var items: [GridItem_] = []
+        var adCount = 0
+
+        for (index, bookmark) in filtered.enumerated() {
+            // 8個ごとに広告を挿入
+            if index > 0 && index % adInterval == 0 && adManager.isAdLoaded {
+                items.append(.ad(id: adCount))
+                adCount += 1
+            }
+            items.append(.bookmark(bookmark))
+        }
+
+        return items
+    }
+
+    /// グリッドアイテムの種類
+    private enum GridItem_: Identifiable {
+        case bookmark(VideoBookmark)
+        case ad(id: Int)
+
+        var id: String {
+            switch self {
+            case .bookmark(let bookmark):
+                return bookmark.id.uuidString
+            case .ad(let id):
+                return "native-ad-\(id)"
+            }
         }
     }
 
@@ -63,23 +102,28 @@ struct ContentView: View {
 
                 // Video grid
                 LazyVGrid(columns: columns, spacing: 4) {
-                    ForEach(viewModel.filteredBookmarks(sortedBookmarks)) { bookmark in
-                        ThumbnailCell(bookmark: bookmark, showTitle: gridMode == 0)
-                            .onTapGesture {
-                                openInExternalApp(bookmark)
-                            }
-                            .contextMenu {
-                                Button {
-                                    bookmarkForTagEdit = bookmark
-                                } label: {
-                                    Label("Add Tags", systemImage: "tag")
+                    ForEach(gridItems) { item in
+                        switch item {
+                        case .bookmark(let bookmark):
+                            ThumbnailCell(bookmark: bookmark, showTitle: gridMode == 0)
+                                .onTapGesture {
+                                    openInExternalApp(bookmark)
                                 }
-                                Button(role: .destructive) {
-                                    viewModel.deleteBookmark(bookmark, context: modelContext)
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
+                                .contextMenu {
+                                    Button {
+                                        bookmarkForTagEdit = bookmark
+                                    } label: {
+                                        Label("Add Tags", systemImage: "tag")
+                                    }
+                                    Button(role: .destructive) {
+                                        viewModel.deleteBookmark(bookmark, context: modelContext)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
                                 }
-                            }
+                        case .ad(_):
+                            NativeAdCell(nativeAd: adManager.nativeAd, showTitle: gridMode == 0)
+                        }
                     }
                 }
                 .padding(4)
@@ -153,24 +197,33 @@ struct ContentView: View {
                 .clipShape(Capsule())
                 .padding(.horizontal, 80)
             }
+            .background(RootViewControllerFinder { viewController in
+                // 広告をロード
+                adManager.loadNativeAd(rootViewController: viewController)
+            })
         }
+    }
+
+    /// UIViewController を取得するためのヘルパー
+    private struct RootViewControllerFinder: UIViewRepresentable {
+        let onFound: (UIViewController) -> Void
+
+        func makeUIView(context: Context) -> UIView {
+            let view = UIView()
+            DispatchQueue.main.async {
+                if let vc = view.window?.rootViewController {
+                    onFound(vc)
+                }
+            }
+            return view
+        }
+
+        func updateUIView(_ uiView: UIView, context: Context) {}
     }
 
     private func openInExternalApp(_ bookmark: VideoBookmark) {
         guard let webURL = URL(string: bookmark.url) else { return }
-
-        // YouTubeのみアプリで開く（他はブラウザ）
-        if bookmark.platform == .youtube {
-            let parsed = URLParserService.parse(bookmark.url)
-            if let videoId = parsed.videoId,
-               let appURL = URL(string: "youtube://watch?v=\(videoId)"),
-               UIApplication.shared.canOpenURL(appURL) {
-                UIApplication.shared.open(appURL)
-                return
-            }
-        }
-
-        // その他はブラウザで開く
+        // Universal Links経由で開く（YouTubeアプリがあれば自動で開く、ダイアログなし）
         UIApplication.shared.open(webURL)
     }
 }
