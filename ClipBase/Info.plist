@@ -46,6 +46,8 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-8595003034177265~8923665640</string>
 	<key>SKAdNetworkItems</key>

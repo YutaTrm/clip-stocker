@@ -11,12 +11,16 @@ struct ContentView: View {
     @State private var viewModel = VideoBookmarkViewModel()
     @State private var bookmarkForTagEdit: VideoBookmark?
     @State private var showingMenu = false
+    @State private var showingProUpgrade = false
     @AppStorage("gridMode") private var gridMode = 0  // 0: 3列, 1: 4列, 2: 5列
     @AppStorage("sortAscending") private var sortAscending = false
 
     // 広告
     private var adManager = AdManager.shared
     private let adInterval = 8 // 広告を挿入する間隔
+
+    // サブスク
+    private var storeManager = StoreManager.shared
 
     private var columns: [GridItem] {
         switch gridMode {
@@ -45,8 +49,12 @@ struct ContentView: View {
 
     /// 追加日時順で最新N件のIDセット（ロック解除対象）
     private var unlockedBookmarkIDs: Set<UUID> {
+        // Proユーザーは全て解除
+        if storeManager.isPro {
+            return Set(bookmarks.map { $0.id })
+        }
         // bookmarksは@Queryで createdAt descending でソートされているので、先頭から取得
-        Set(bookmarks.prefix(freeLimit).map { $0.id })
+        return Set(bookmarks.prefix(freeLimit).map { $0.id })
     }
 
     /// グリッドに表示するアイテム（ブックマーク + 広告）
@@ -56,8 +64,8 @@ struct ContentView: View {
         var adCount = 0
 
         for (index, bookmark) in filtered.enumerated() {
-            // 8個ごとに広告を挿入
-            if index > 0 && index % adInterval == 0 && adManager.isAdLoaded {
+            // Proユーザーは広告なし
+            if !storeManager.isPro && index > 0 && index % adInterval == 0 && adManager.isAdLoaded {
                 items.append(.ad(id: adCount))
                 adCount += 1
             }
@@ -117,7 +125,9 @@ struct ContentView: View {
                             let isLocked = !unlockedBookmarkIDs.contains(bookmark.id)
                             ThumbnailCell(bookmark: bookmark, showTitle: gridMode == 0, isLocked: isLocked)
                                 .onTapGesture {
-                                    if !isLocked {
+                                    if isLocked {
+                                        showingProUpgrade = true
+                                    } else {
                                         openInExternalApp(bookmark)
                                     }
                                 }
@@ -188,6 +198,9 @@ struct ContentView: View {
             }
             .sheet(isPresented: $showingMenu) {
                 MenuView()
+            }
+            .sheet(isPresented: $showingProUpgrade) {
+                ProUpgradeSheet()
             }
             .safeAreaInset(edge: .bottom) {
                 HStack {

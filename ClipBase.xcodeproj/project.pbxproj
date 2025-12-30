@@ -38,6 +38,7 @@
 /* Begin PBXFileReference section */
 		0E21321C2EFD34C200107754 /* ClipBase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClipBase.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E21326A2EFD3E4E00107754 /* ClipBaseShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ClipBaseShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		0E6650252F03B01600982789 /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -54,6 +55,7 @@
 				Assets.xcassets,
 				Models/Tag.swift,
 				Models/VideoBookmark.swift,
+				Products.storekit,
 				Services/URLParserService.swift,
 				Utilities/AppGroup.swift,
 			);
@@ -63,6 +65,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				Products.storekit,
 			);
 			target = 0E21321B2EFD34C200107754 /* ClipBase */;
 		};
@@ -110,6 +113,7 @@
 		0E2132132EFD34C200107754 = {
 			isa = PBXGroup;
 			children = (
+				0E6650252F03B01600982789 /* Products.storekit */,
 				0E21321E2EFD34C200107754 /* ClipBase */,
 				0E21326B2EFD3E4E00107754 /* ClipBaseShareExtension */,
 				0E21321D2EFD34C200107754 /* Products */,
@@ -406,7 +410,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.clipstockerapp.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -445,7 +449,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.clipstockerapp.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -474,7 +478,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.clipstockerapp.ios.ShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -503,7 +507,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.clipstockerapp.ios.ShareExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
