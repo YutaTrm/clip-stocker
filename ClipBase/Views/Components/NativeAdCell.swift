@@ -34,12 +34,37 @@ struct NativeAdViewRepresentable: UIViewRepresentable {
         adView.layer.cornerRadius = 8
         adView.clipsToBounds = true
 
-        // メディアビュー（広告画像/動画）
-        let mediaView = MediaView()
-        mediaView.translatesAutoresizingMaskIntoConstraints = false
-        mediaView.contentMode = .scaleAspectFill
-        adView.addSubview(mediaView)
-        adView.mediaView = mediaView
+        // 動画広告の場合は静止画を使用、それ以外はMediaViewを使用
+        if nativeAd.mediaContent.hasVideoContent, let image = nativeAd.images?.first?.image {
+            // 静止画で表示（動画のスクロール問題を回避）
+            let imageView = UIImageView(image: image)
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            imageView.contentMode = .scaleAspectFit
+            imageView.backgroundColor = .secondarySystemBackground
+            adView.addSubview(imageView)
+            adView.imageView = imageView
+
+            NSLayoutConstraint.activate([
+                imageView.topAnchor.constraint(equalTo: adView.topAnchor),
+                imageView.leadingAnchor.constraint(equalTo: adView.leadingAnchor),
+                imageView.trailingAnchor.constraint(equalTo: adView.trailingAnchor),
+                imageView.bottomAnchor.constraint(equalTo: adView.bottomAnchor),
+            ])
+        } else {
+            // メディアビュー（静止画広告の場合）
+            let mediaView = MediaView()
+            mediaView.translatesAutoresizingMaskIntoConstraints = false
+            mediaView.contentMode = .scaleAspectFill
+            adView.addSubview(mediaView)
+            adView.mediaView = mediaView
+
+            NSLayoutConstraint.activate([
+                mediaView.topAnchor.constraint(equalTo: adView.topAnchor),
+                mediaView.leadingAnchor.constraint(equalTo: adView.leadingAnchor),
+                mediaView.trailingAnchor.constraint(equalTo: adView.trailingAnchor),
+                mediaView.bottomAnchor.constraint(equalTo: adView.bottomAnchor),
+            ])
+        }
 
         // 広告ラベル
         let adLabel = UILabel()
@@ -68,12 +93,6 @@ struct NativeAdViewRepresentable: UIViewRepresentable {
         adView.headlineView = titleLabel
 
         NSLayoutConstraint.activate([
-            // メディアビュー
-            mediaView.topAnchor.constraint(equalTo: adView.topAnchor),
-            mediaView.leadingAnchor.constraint(equalTo: adView.leadingAnchor),
-            mediaView.trailingAnchor.constraint(equalTo: adView.trailingAnchor),
-            mediaView.bottomAnchor.constraint(equalTo: adView.bottomAnchor),
-
             // 広告ラベル（右上 - プラットフォームバッジと同じ位置）
             adLabel.topAnchor.constraint(equalTo: adView.topAnchor, constant: 6),
             adLabel.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -6),
@@ -101,7 +120,9 @@ struct NativeAdViewRepresentable: UIViewRepresentable {
 
     func updateUIView(_ adView: NativeAdView, context: Context) {
         adView.nativeAd = nativeAd
-        adView.mediaView?.mediaContent = nativeAd.mediaContent
+        if !nativeAd.mediaContent.hasVideoContent {
+            adView.mediaView?.mediaContent = nativeAd.mediaContent
+        }
         (adView.headlineView as? UILabel)?.text = nativeAd.headline
     }
 }

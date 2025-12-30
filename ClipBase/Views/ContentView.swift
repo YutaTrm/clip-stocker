@@ -143,8 +143,8 @@ struct ContentView: View {
                                         Label("Delete", systemImage: "trash")
                                     }
                                 }
-                        case .ad(_):
-                            NativeAdCell(nativeAd: adManager.nativeAd, showTitle: gridMode == 0)
+                        case .ad(let adIndex):
+                            NativeAdCell(nativeAd: adManager.nativeAd(at: adIndex), showTitle: gridMode == 0)
                         }
                     }
                 }
@@ -224,7 +224,7 @@ struct ContentView: View {
             }
             .background(RootViewControllerFinder { viewController in
                 // 広告をロード
-                adManager.loadNativeAd(rootViewController: viewController)
+                adManager.loadNativeAds(rootViewController: viewController)
             })
         }
     }

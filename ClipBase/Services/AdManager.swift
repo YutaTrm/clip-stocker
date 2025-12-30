@@ -13,10 +13,13 @@ final class AdManager: NSObject {
     private let nativeAdUnitID = "ca-app-pub-8595003034177265/2186527599"
     #endif
 
-    private(set) var nativeAd: NativeAd?
+    private(set) var nativeAds: [NativeAd] = []
     private var adLoader: AdLoader?
     private(set) var isAdLoaded = false
     private var isLoading = false
+
+    // 読み込む広告の数
+    private let numberOfAdsToLoad = 5
 
     private override init() {
         super.init()
@@ -28,26 +31,41 @@ final class AdManager: NSObject {
         }
     }
 
-    func loadNativeAd(rootViewController: UIViewController) {
+    /// 指定インデックスの広告を取得
+    func nativeAd(at index: Int) -> NativeAd? {
+        guard !nativeAds.isEmpty else { return nil }
+        return nativeAds[index % nativeAds.count]
+    }
+
+    func loadNativeAds(rootViewController: UIViewController) {
         // 既にロード中 or ロード済みの場合はスキップ
         guard !isLoading && !isAdLoaded else { return }
         isLoading = true
 
-        let options = NativeAdMediaAdLoaderOptions()
-        options.mediaAspectRatio = .portrait
+        let mediaOptions = NativeAdMediaAdLoaderOptions()
+        mediaOptions.mediaAspectRatio = .portrait
+
+        // 動画広告の自動再生を無効化（スクロール時の問題を回避）
+        let videoOptions = VideoOptions()
+        videoOptions.shouldStartMuted = true
+        videoOptions.isClickToExpandRequested = true
+
+        // 複数の広告を読み込む
+        let multipleAdsOptions = MultipleAdsAdLoaderOptions()
+        multipleAdsOptions.numberOfAds = numberOfAdsToLoad
 
         adLoader = AdLoader(
             adUnitID: nativeAdUnitID,
             rootViewController: rootViewController,
             adTypes: [.native],
-            options: [options]
+            options: [mediaOptions, videoOptions, multipleAdsOptions]
         )
         adLoader?.delegate = self
         adLoader?.load(Request())
     }
 
-    func clearAd() {
-        nativeAd = nil
+    func clearAds() {
+        nativeAds.removeAll()
         isAdLoaded = false
         isLoading = false
     }
@@ -56,15 +74,21 @@ final class AdManager: NSObject {
 // MARK: - NativeAdLoaderDelegate
 extension AdManager: NativeAdLoaderDelegate {
     func adLoader(_ adLoader: AdLoader, didReceive nativeAd: NativeAd) {
-        self.nativeAd = nativeAd
-        self.isAdLoaded = true
-        self.isLoading = false
-        print("Native ad loaded successfully")
+        nativeAds.append(nativeAd)
+        print("Native ad loaded: \(nativeAds.count)")
+    }
+
+    func adLoaderDidFinishLoading(_ adLoader: AdLoader) {
+        isAdLoaded = !nativeAds.isEmpty
+        isLoading = false
+        print("Finished loading \(nativeAds.count) native ads")
     }
 
     func adLoader(_ adLoader: AdLoader, didFailToReceiveAdWithError error: Error) {
         print("Native ad failed to load: \(error.localizedDescription)")
-        self.isAdLoaded = false
-        self.isLoading = false
+        isLoading = false
+        if nativeAds.isEmpty {
+            isAdLoaded = false
+        }
     }
 }
