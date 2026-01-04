@@ -91,12 +91,20 @@ struct ProUpgradeSheet: View {
                     .padding(.top, 8)
 
                     // Terms
-                    Text("Payment will be charged to your Apple ID account. Subscription automatically renews unless canceled at least 24 hours before the end of the current period.")
+                    VStack(spacing: 8) {
+                        Text("Payment will be charged to your Apple ID account. Subscription automatically renews unless canceled at least 24 hours before the end of the current period.")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                            .multilineTextAlignment(.center)
+
+                        HStack(spacing: 16) {
+                            Link("Terms of Use", destination: URL(string: "https://yutatrm.github.io/clip-stocker/terms.html")!)
+                            Link("Privacy Policy", destination: URL(string: "https://yutatrm.github.io/clip-stocker/privacy.html")!)
+                        }
                         .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                        .padding(.bottom, 20)
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
