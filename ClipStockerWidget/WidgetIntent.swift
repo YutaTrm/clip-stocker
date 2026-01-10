@@ -36,6 +36,10 @@ struct TagEntityQuery: EntityQuery {
     }
 
     func suggestedEntities() async throws -> [TagEntity] {
+        // Pro限定: 非Proユーザーは「すべて」のみ
+        guard isPro else {
+            return [TagEntity.all]
+        }
         var results = [TagEntity.all]
         results.append(contentsOf: fetchTags())
         return results
@@ -43,6 +47,11 @@ struct TagEntityQuery: EntityQuery {
 
     func defaultResult() async -> TagEntity? {
         return TagEntity.all
+    }
+
+    private var isPro: Bool {
+        let defaults = UserDefaults(suiteName: "group.com.clipstockerapp.shared")
+        return defaults?.bool(forKey: "isPro") ?? false
     }
 
     private func fetchTags() -> [TagEntity] {

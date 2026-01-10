@@ -17,6 +17,12 @@ final class StoreManager {
         !purchasedProductIDs.isEmpty
     }
 
+    // App Group経由でウィジェットとPro状態を共有
+    private func syncProStatusToWidget() {
+        let defaults = UserDefaults(suiteName: "group.com.clipstockerapp.shared")
+        defaults?.set(isPro, forKey: "isPro")
+    }
+
     var monthlyProduct: Product? {
         products.first { $0.id == Self.monthlyProductID }
     }
@@ -103,6 +109,7 @@ final class StoreManager {
         }
 
         purchasedProductIDs = purchased
+        syncProStatusToWidget()
     }
 
     // MARK: - Transaction Listener

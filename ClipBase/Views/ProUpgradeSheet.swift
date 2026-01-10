@@ -32,6 +32,7 @@ struct ProUpgradeSheet: View {
                     VStack(alignment: .leading, spacing: 16) {
                         FeatureRow(icon: "infinity", title: "Unlimited Videos", description: "Open all saved videos without limits")
                         FeatureRow(icon: "tag.fill", title: "Unlimited Tags", description: "Create as many tags as you need")
+                        FeatureRow(icon: "square.grid.2x2.fill", title: "Widget Tag Filter", description: "Filter widget by tags")
                         FeatureRow(icon: "xmark.circle.fill", title: "No Ads", description: "Enjoy an ad-free experience")
                     }
                     .padding(.horizontal)
