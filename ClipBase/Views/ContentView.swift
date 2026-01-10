@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import GoogleMobileAds
 import UIKit
+import WidgetKit
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
@@ -301,6 +302,7 @@ struct QuickTagSheet: View {
             bookmark.tags.append(tag)
         }
         try? modelContext.save()
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
 

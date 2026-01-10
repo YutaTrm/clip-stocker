@@ -1,12 +1,13 @@
 import WidgetKit
 import SwiftUI
 import SwiftData
+import AppIntents
 
 struct ClipStockerWidget: Widget {
     let kind: String = "ClipStockerWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+        AppIntentConfiguration(kind: kind, intent: ClipStockerWidgetIntent.self, provider: Provider()) { entry in
             WidgetEntryView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
@@ -17,7 +18,7 @@ struct ClipStockerWidget: Widget {
     }
 }
 
-struct Provider: TimelineProvider {
+struct Provider: AppIntentTimelineProvider {
     private let container: ModelContainer
     private let initStatus: String
 
@@ -43,16 +44,14 @@ struct Provider: TimelineProvider {
     }
 
     func placeholder(in context: Context) -> WidgetEntry {
-        WidgetEntry(date: Date(), bookmarks: sampleBookmarks(), debugMessage: "Placeholder")
+        WidgetEntry(date: Date(), bookmarks: sampleBookmarks())
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (WidgetEntry) -> ()) {
+    func snapshot(for configuration: ClipStockerWidgetIntent, in context: Context) async -> WidgetEntry {
         if context.isPreview {
-            // プレビュー用サンプルデータ
-            completion(WidgetEntry(date: Date(), bookmarks: sampleBookmarks(), debugMessage: "Preview"))
+            return WidgetEntry(date: Date(), bookmarks: sampleBookmarks())
         } else {
-            let entry = fetchEntry()
-            completion(entry)
+            return fetchEntry(for: configuration)
         }
     }
 
@@ -65,24 +64,40 @@ struct Provider: TimelineProvider {
         ]
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<WidgetEntry>) -> ()) {
-        let entry = fetchEntry()
+    func timeline(for configuration: ClipStockerWidgetIntent, in context: Context) async -> Timeline<WidgetEntry> {
+        let entry = fetchEntry(for: configuration)
         // 15分ごとに更新
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date()
-        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-        completion(timeline)
+        return Timeline(entries: [entry], policy: .after(nextUpdate))
     }
 
-    private func fetchEntry() -> WidgetEntry {
+    private func fetchEntry(for configuration: ClipStockerWidgetIntent) -> WidgetEntry {
         let context = ModelContext(container)
-        var descriptor = FetchDescriptor<VideoBookmark>(
-            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
-        )
-        descriptor.fetchLimit = 30
+        let selectedTagId = configuration.selectedTag.id
 
         do {
-            let bookmarks = try context.fetch(descriptor)
-            let items = bookmarks.map { bookmark in
+            // 全件取得して後でフィルター
+            var descriptor = FetchDescriptor<VideoBookmark>(
+                sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+            )
+            let allBookmarks = try context.fetch(descriptor)
+
+            var filteredBookmarks: [VideoBookmark]
+            if selectedTagId == "all" {
+                filteredBookmarks = allBookmarks
+            } else if let tagUUID = UUID(uuidString: selectedTagId) {
+                // メモリ上でタグフィルター
+                filteredBookmarks = allBookmarks.filter { bookmark in
+                    bookmark.tags.contains { $0.id == tagUUID }
+                }
+            } else {
+                filteredBookmarks = allBookmarks
+            }
+
+            // 30件に制限
+            let limitedBookmarks = Array(filteredBookmarks.prefix(30))
+
+            let items = limitedBookmarks.map { bookmark in
                 WidgetBookmarkItem(
                     id: bookmark.id,
                     url: bookmark.url,
@@ -91,20 +106,20 @@ struct Provider: TimelineProvider {
                     thumbnailData: bookmark.thumbnailData
                 )
             }
-            return WidgetEntry(date: Date(), bookmarks: items, debugMessage: "[\(initStatus)] \(bookmarks.count)件")
+            return WidgetEntry(date: Date(), bookmarks: items, tagName: configuration.selectedTag.name)
         } catch {
-            return WidgetEntry(date: Date(), bookmarks: [], debugMessage: "[\(initStatus)] Err")
+            return WidgetEntry(date: Date(), bookmarks: [])
         }
     }
 }
 
-#Preview(as: .systemSmall) {
+#Preview(as: .systemMedium) {
     ClipStockerWidget()
 } timeline: {
     WidgetEntry(date: .now, bookmarks: [])
 }
 
-#Preview(as: .systemMedium) {
+#Preview(as: .systemLarge) {
     ClipStockerWidget()
 } timeline: {
     WidgetEntry(date: .now, bookmarks: [])

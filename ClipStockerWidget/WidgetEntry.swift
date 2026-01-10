@@ -4,7 +4,7 @@ import Foundation
 struct WidgetEntry: TimelineEntry {
     let date: Date
     let bookmarks: [WidgetBookmarkItem]
-    var debugMessage: String = ""
+    var tagName: String = "すべて"
 }
 
 struct WidgetBookmarkItem: Identifiable {

@@ -157,26 +157,22 @@ struct MediumThumbnailCard: View {
     let bookmark: WidgetBookmarkItem
 
     var body: some View {
-        ZStack {
-            if let data = bookmark.thumbnailData, let image = UIImage(data: data) {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } else {
-                platformGradient(for: bookmark.platform)
-            }
-
-            VStack {
-                HStack {
-                    Spacer()
-                    platformBadge(for: bookmark.platform)
-                        .padding(4)
+        Color.clear
+            .aspectRatio(9/16, contentMode: .fit)
+            .overlay {
+                if let data = bookmark.thumbnailData, let image = UIImage(data: data) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else {
+                    platformGradient(for: bookmark.platform)
                 }
-                Spacer()
             }
-        }
-        .aspectRatio(9/16, contentMode: .fit)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(alignment: .topTrailing) {
+                platformBadge(for: bookmark.platform)
+                    .padding(4)
+            }
     }
 }
 
@@ -227,7 +223,7 @@ struct LargeWidgetView: View {
     private var placeholderCard: some View {
         RoundedRectangle(cornerRadius: 16)
             .fill(Color(.systemGray5))
-            .aspectRatio(9/16, contentMode: .fit)
+            .aspectRatio(3/4, contentMode: .fit)
             .overlay {
                 Image(systemName: "plus")
                     .foregroundStyle(.secondary)
@@ -251,19 +247,18 @@ struct LargeThumbnailCard: View {
     let bookmark: WidgetBookmarkItem
 
     var body: some View {
-        Group {
-            if let data = bookmark.thumbnailData, let image = UIImage(data: data) {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-            } else {
-                platformGradient(for: bookmark.platform)
+        Color.clear
+            .aspectRatio(3/4, contentMode: .fit)
+            .overlay {
+                if let data = bookmark.thumbnailData, let image = UIImage(data: data) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else {
+                    platformGradient(for: bookmark.platform)
+                }
             }
-        }
-        .aspectRatio(3/4, contentMode: .fit)
-        .clipped()
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
 

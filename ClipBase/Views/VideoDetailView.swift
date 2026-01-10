@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import WebKit
+import WidgetKit
 
 struct VideoDetailView: View {
     @Environment(\.dismiss) private var dismiss
@@ -270,6 +271,7 @@ struct TagSelectionSheet: View {
             bookmark.tags.append(tag)
         }
         try? modelContext.save()
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
 
