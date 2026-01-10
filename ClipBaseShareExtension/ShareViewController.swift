@@ -7,6 +7,7 @@ import UIKit
 import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
+import WidgetKit
 
 class ShareViewController: UIViewController {
 
@@ -184,6 +185,9 @@ class ShareViewController: UIViewController {
 
             context.insert(bookmark)
             try context.save()
+
+            // ウィジェットを更新
+            WidgetCenter.shared.reloadAllTimelines()
         } catch {
             print("Failed to save bookmark: \(error)")
         }

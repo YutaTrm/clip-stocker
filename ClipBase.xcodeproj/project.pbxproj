@@ -7,11 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E1DFDBD2F1264B100803382 /* ClipStockerWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0E1DFDB32F1264B100803382 /* ClipStockerWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0E2132742EFD3E4E00107754 /* ClipBaseShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0E21326A2EFD3E4E00107754 /* ClipBaseShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0E6EAABF2F038CF300C2555B /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 0E6EAABE2F038CF300C2555B /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0E1DFDBB2F1264B100803382 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0E2132142EFD34C200107754 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0E1DFDB22F1264B100803382;
+			remoteInfo = ClipStockerWidget;
+		};
 		0E2132722EFD3E4E00107754 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0E2132142EFD34C200107754 /* Project object */;
@@ -28,6 +36,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				0E1DFDBD2F1264B100803382 /* ClipStockerWidget.appex in Embed Foundation Extensions */,
 				0E2132742EFD3E4E00107754 /* ClipBaseShareExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
@@ -36,12 +45,30 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0E1DFDB32F1264B100803382 /* ClipStockerWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ClipStockerWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E21321C2EFD34C200107754 /* ClipBase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClipBase.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E21326A2EFD3E4E00107754 /* ClipBaseShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ClipBaseShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E6650252F03B01600982789 /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0E1DFDC12F1264B100803382 /* Exceptions for "ClipStockerWidget" folder in "ClipStockerWidget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 0E1DFDB22F1264B100803382 /* ClipStockerWidget */;
+		};
+		0E1DFDD52F12669300803382 /* Exceptions for "ClipBase" folder in "ClipStockerWidget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				Models/Tag.swift,
+				Models/VideoBookmark.swift,
+				Utilities/AppGroup.swift,
+			);
+			target = 0E1DFDB22F1264B100803382 /* ClipStockerWidget */;
+		};
 		0E2132752EFD3E4E00107754 /* Exceptions for "ClipBaseShareExtension" folder in "ClipBaseShareExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -72,11 +99,20 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		0E1DFDB42F1264B100803382 /* ClipStockerWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0E1DFDC12F1264B100803382 /* Exceptions for "ClipStockerWidget" folder in "ClipStockerWidget" target */,
+			);
+			path = ClipStockerWidget;
+			sourceTree = "<group>";
+		};
 		0E21321E2EFD34C200107754 /* ClipBase */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				0E6EAABD2F038CB500C2555B /* Exceptions for "ClipBase" folder in "ClipBase" target */,
 				0E21327E2EFD424700107754 /* Exceptions for "ClipBase" folder in "ClipBaseShareExtension" target */,
+				0E1DFDD52F12669300803382 /* Exceptions for "ClipBase" folder in "ClipStockerWidget" target */,
 			);
 			path = ClipBase;
 			sourceTree = "<group>";
@@ -92,6 +128,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0E1DFDB02F1264B100803382 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0E2132192EFD34C200107754 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -116,6 +159,7 @@
 				0E6650252F03B01600982789 /* Products.storekit */,
 				0E21321E2EFD34C200107754 /* ClipBase */,
 				0E21326B2EFD3E4E00107754 /* ClipBaseShareExtension */,
+				0E1DFDB42F1264B100803382 /* ClipStockerWidget */,
 				0E21321D2EFD34C200107754 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -125,6 +169,7 @@
 			children = (
 				0E21321C2EFD34C200107754 /* ClipBase.app */,
 				0E21326A2EFD3E4E00107754 /* ClipBaseShareExtension.appex */,
+				0E1DFDB32F1264B100803382 /* ClipStockerWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -132,6 +177,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0E1DFDB22F1264B100803382 /* ClipStockerWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0E1DFDC02F1264B100803382 /* Build configuration list for PBXNativeTarget "ClipStockerWidget" */;
+			buildPhases = (
+				0E1DFDAF2F1264B100803382 /* Sources */,
+				0E1DFDB02F1264B100803382 /* Frameworks */,
+				0E1DFDB12F1264B100803382 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				0E1DFDB42F1264B100803382 /* ClipStockerWidget */,
+			);
+			name = ClipStockerWidget;
+			packageProductDependencies = (
+			);
+			productName = ClipStockerWidget;
+			productReference = 0E1DFDB32F1264B100803382 /* ClipStockerWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		0E21321B2EFD34C200107754 /* ClipBase */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0E2132292EFD34C300107754 /* Build configuration list for PBXNativeTarget "ClipBase" */;
@@ -145,6 +212,7 @@
 			);
 			dependencies = (
 				0E2132732EFD3E4E00107754 /* PBXTargetDependency */,
+				0E1DFDBC2F1264B100803382 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				0E21321E2EFD34C200107754 /* ClipBase */,
@@ -189,6 +257,9 @@
 				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 2610;
 				TargetAttributes = {
+					0E1DFDB22F1264B100803382 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
 					0E21321B2EFD34C200107754 = {
 						CreatedOnToolsVersion = 26.1.1;
 					};
@@ -216,11 +287,19 @@
 			targets = (
 				0E21321B2EFD34C200107754 /* ClipBase */,
 				0E2132692EFD3E4E00107754 /* ClipBaseShareExtension */,
+				0E1DFDB22F1264B100803382 /* ClipStockerWidget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0E1DFDB12F1264B100803382 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0E21321A2EFD34C200107754 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -238,6 +317,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0E1DFDAF2F1264B100803382 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0E2132182EFD34C200107754 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -255,6 +341,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0E1DFDBC2F1264B100803382 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0E1DFDB22F1264B100803382 /* ClipStockerWidget */;
+			targetProxy = 0E1DFDBB2F1264B100803382 /* PBXContainerItemProxy */;
+		};
 		0E2132732EFD3E4E00107754 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0E2132692EFD3E4E00107754 /* ClipBaseShareExtension */;
@@ -263,6 +354,66 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		0E1DFDBE2F1264B100803382 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ClipStockerWidget/ClipStockerWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5B645QQY58;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ClipStockerWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ClipStockerWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.clipstockerapp.ios.ClipStockerWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0E1DFDBF2F1264B100803382 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ClipStockerWidget/ClipStockerWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5B645QQY58;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ClipStockerWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ClipStockerWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.clipstockerapp.ios.ClipStockerWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		0E2132272EFD34C300107754 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -523,6 +674,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0E1DFDC02F1264B100803382 /* Build configuration list for PBXNativeTarget "ClipStockerWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0E1DFDBE2F1264B100803382 /* Debug */,
+				0E1DFDBF2F1264B100803382 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		0E2132172EFD34C200107754 /* Build configuration list for PBXProject "ClipBase" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

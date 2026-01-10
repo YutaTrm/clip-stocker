@@ -21,6 +21,20 @@
                ReferencedContainer = "container:ClipBase.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0E1DFDB22F1264B100803382"
+               BuildableName = "ClipStockerWidget.appex"
+               BlueprintName = "ClipStockerWidget"
+               ReferencedContainer = "container:ClipBase.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

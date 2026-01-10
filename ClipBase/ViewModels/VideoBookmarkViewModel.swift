@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 @Observable
 final class VideoBookmarkViewModel {
@@ -25,11 +26,17 @@ final class VideoBookmarkViewModel {
         bookmark.title = metadata.title  // 動画の元タイトル
 
         try? context.save()
+
+        // ウィジェットを更新
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     func deleteBookmark(_ bookmark: VideoBookmark, context: ModelContext) {
         context.delete(bookmark)
         try? context.save()
+
+        // ウィジェットを更新
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     func filteredBookmarks(_ bookmarks: [VideoBookmark]) -> [VideoBookmark] {

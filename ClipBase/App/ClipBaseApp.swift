@@ -36,7 +36,25 @@ struct ClipBaseApp: App {
                     }
                 }
             }
+            .onOpenURL { url in
+                // ウィジェットからのURL処理
+                handleWidgetURL(url)
+            }
         }
         .modelContainer(ModelContainer.shared)
+    }
+
+    private func handleWidgetURL(_ url: URL) {
+        // clipstocker://open?url=https://... の形式
+        guard url.scheme == "clipstocker",
+              url.host == "open",
+              let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let urlParam = components.queryItems?.first(where: { $0.name == "url" })?.value,
+              let videoURL = URL(string: urlParam) else {
+            return
+        }
+
+        // 動画URLを外部アプリで開く
+        UIApplication.shared.open(videoURL)
     }
 }
