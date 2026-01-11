@@ -9,7 +9,7 @@ struct ClipStockerWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: kind, intent: ClipStockerWidgetIntent.self, provider: Provider()) { entry in
             WidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .containerBackground(.background, for: .widget)
         }
         .configurationDisplayName("ClipStocker")
         .description("最新の保存動画を表示")
@@ -73,7 +73,7 @@ struct Provider: AppIntentTimelineProvider {
 
     private func fetchEntry(for configuration: ClipStockerWidgetIntent) -> WidgetEntry {
         let context = ModelContext(container)
-        let selectedTagId = configuration.selectedTag.id
+        let selectedTagId = configuration.resolvedTag.id
 
         do {
             // 全件取得して後でフィルター
@@ -106,7 +106,7 @@ struct Provider: AppIntentTimelineProvider {
                     thumbnailData: bookmark.thumbnailData
                 )
             }
-            return WidgetEntry(date: Date(), bookmarks: items, tagName: configuration.selectedTag.name)
+            return WidgetEntry(date: Date(), bookmarks: items, tagName: configuration.resolvedTag.name)
         } catch {
             return WidgetEntry(date: Date(), bookmarks: [])
         }

@@ -27,7 +27,8 @@ final class VideoBookmarkViewModel {
 
         try? context.save()
 
-        // ウィジェットを更新
+        // 外部ストレージの書き込み完了を待ってからウィジェットを更新
+        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5秒待機
         WidgetCenter.shared.reloadAllTimelines()
     }
 

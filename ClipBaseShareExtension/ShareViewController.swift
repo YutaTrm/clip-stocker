@@ -186,8 +186,17 @@ class ShareViewController: UIViewController {
             context.insert(bookmark)
             try context.save()
 
-            // ウィジェットを更新
-            WidgetCenter.shared.reloadAllTimelines()
+            // バックグラウンドでサムネイルを取得してウィジェットを更新
+            Task {
+                let metadata = await ThumbnailService.shared.fetchMetadata(for: bookmark)
+                bookmark.thumbnailData = metadata.thumbnailData
+                bookmark.title = metadata.title
+                try? context.save()
+
+                // 外部ストレージの書き込み完了を待ってからウィジェットを更新
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                WidgetCenter.shared.reloadAllTimelines()
+            }
         } catch {
             print("Failed to save bookmark: \(error)")
         }

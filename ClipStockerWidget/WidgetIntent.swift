@@ -16,9 +16,7 @@ struct TagEntity: AppEntity {
     }
 
     // 「すべて」を表す特別なエンティティ
-    static var all: TagEntity {
-        TagEntity(id: "all", name: "すべて")
-    }
+    static let all = TagEntity(id: "all", name: "すべて")
 }
 
 // MARK: - Tag Entity Query
@@ -86,14 +84,12 @@ struct ClipStockerWidgetIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "ClipStocker設定"
     static var description = IntentDescription("表示するタグを選択")
 
-    @Parameter(title: "タグ", default: TagEntity.all)
-    var selectedTag: TagEntity
+    @Parameter(title: "タグ")
+    var selectedTag: TagEntity?
 
-    init() {
-        self.selectedTag = TagEntity.all
-    }
+    init() {}
 
-    init(selectedTag: TagEntity) {
-        self.selectedTag = selectedTag
+    var resolvedTag: TagEntity {
+        selectedTag ?? TagEntity.all
     }
 }
