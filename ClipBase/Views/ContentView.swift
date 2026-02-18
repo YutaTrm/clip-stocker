@@ -428,10 +428,20 @@ struct AddBookmarkSheet: View {
                         .textContentType(.URL)
                         .autocapitalization(.none)
                         .keyboardType(.URL)
+                        .onChange(of: urlText) { _, newValue in
+                            if newValue.count > 200 {
+                                urlText = String(newValue.prefix(200))
+                            }
+                        }
                 }
 
                 Section {
                     TextField("Enter title (optional)", text: $titleText)
+                        .onChange(of: titleText) { _, newValue in
+                            if newValue.count > 50 {
+                                titleText = String(newValue.prefix(50))
+                            }
+                        }
                 } header: {
                     Text("Title")
                 } footer: {
