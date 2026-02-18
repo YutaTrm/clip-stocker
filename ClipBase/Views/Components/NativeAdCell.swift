@@ -1,4 +1,6 @@
 import SwiftUI
+
+#if !targetEnvironment(macCatalyst)
 import GoogleMobileAds
 
 /// グリッド内に表示するネイティブ広告セル
@@ -157,3 +159,15 @@ private class GradientView: UIView {
     NativeAdCell(nativeAd: nil, showTitle: true)
         .frame(width: 120, height: 200)
 }
+
+#else
+// Mac Catalyst用のスタブ
+struct NativeAdCell: View {
+    let nativeAd: Any?
+    let showTitle: Bool
+
+    var body: some View {
+        EmptyView()
+    }
+}
+#endif

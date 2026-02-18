@@ -1,4 +1,6 @@
 import Foundation
+
+#if !targetEnvironment(macCatalyst)
 import GoogleMobileAds
 
 @Observable
@@ -26,6 +28,13 @@ final class AdManager: NSObject {
     }
 
     func configure() {
+        #if DEBUG
+        // デバッグ時はテストデバイスを登録
+        MobileAds.shared.requestConfiguration.testDeviceIdentifiers = [
+            "81d45c744f3f32a01c4ee6e3fc8a2fd7" // TRMのiPhone16Pro
+        ]
+        #endif
+
         MobileAds.shared.start { status in
             print("AdMob SDK initialized: \(status.adapterStatusesByClassName)")
         }
@@ -92,3 +101,21 @@ extension AdManager: NativeAdLoaderDelegate {
         }
     }
 }
+
+#else
+// Mac Catalyst用のスタブ
+@Observable
+final class AdManager: NSObject {
+    static let shared = AdManager()
+    private(set) var isAdLoaded = false
+
+    private override init() {
+        super.init()
+    }
+
+    func configure() {}
+    func loadNativeAds(rootViewController: Any) {}
+    func clearAds() {}
+    func nativeAd(at index: Int) -> Any? { nil }
+}
+#endif

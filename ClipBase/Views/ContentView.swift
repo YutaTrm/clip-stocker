@@ -1,6 +1,8 @@
 import SwiftUI
 import SwiftData
+#if !targetEnvironment(macCatalyst)
 import GoogleMobileAds
+#endif
 import UIKit
 import WidgetKit
 
@@ -17,8 +19,10 @@ struct ContentView: View {
     @AppStorage("sortAscending") private var sortAscending = false
 
     // 広告
+    #if !targetEnvironment(macCatalyst)
     private var adManager = AdManager.shared
     private let adInterval = 8 // 広告を挿入する間隔
+    #endif
 
     // サブスク
     private var storeManager = StoreManager.shared
@@ -58,6 +62,7 @@ struct ContentView: View {
         return Set(bookmarks.prefix(freeLimit).map { $0.id })
     }
 
+    #if !targetEnvironment(macCatalyst)
     /// グリッドに表示するアイテム（ブックマーク + 広告）
     private var gridItems: [GridItem_] {
         let filtered = viewModel.filteredBookmarks(sortedBookmarks)
@@ -90,6 +95,7 @@ struct ContentView: View {
             }
         }
     }
+    #endif
 
     var body: some View {
         NavigationStack {
@@ -120,6 +126,32 @@ struct ContentView: View {
 
                 // Video grid
                 LazyVGrid(columns: columns, spacing: 4) {
+                    #if targetEnvironment(macCatalyst)
+                    // Mac Catalyst: 広告なし
+                    ForEach(viewModel.filteredBookmarks(sortedBookmarks)) { bookmark in
+                        let isLocked = !unlockedBookmarkIDs.contains(bookmark.id)
+                        ThumbnailCell(bookmark: bookmark, showTitle: gridMode == 0, isLocked: isLocked)
+                            .onTapGesture {
+                                if isLocked {
+                                    showingProUpgrade = true
+                                } else {
+                                    openInExternalApp(bookmark)
+                                }
+                            }
+                            .contextMenu {
+                                Button {
+                                    bookmarkForTagEdit = bookmark
+                                } label: {
+                                    Label("Add Tags", systemImage: "tag")
+                                }
+                                Button(role: .destructive) {
+                                    viewModel.deleteBookmark(bookmark, context: modelContext)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+                    }
+                    #else
                     ForEach(gridItems) { item in
                         switch item {
                         case .bookmark(let bookmark):
@@ -148,6 +180,7 @@ struct ContentView: View {
                             NativeAdCell(nativeAd: adManager.nativeAd(at: adIndex), showTitle: gridMode == 0)
                         }
                     }
+                    #endif
                 }
                 .padding(4)
             }
@@ -223,13 +256,16 @@ struct ContentView: View {
                 .clipShape(Capsule())
                 .padding(.horizontal, 80)
             }
+            #if !targetEnvironment(macCatalyst)
             .background(RootViewControllerFinder { viewController in
                 // 広告をロード
                 adManager.loadNativeAds(rootViewController: viewController)
             })
+            #endif
         }
     }
 
+    #if !targetEnvironment(macCatalyst)
     /// UIViewController を取得するためのヘルパー
     private struct RootViewControllerFinder: UIViewRepresentable {
         let onFound: (UIViewController) -> Void
@@ -246,6 +282,7 @@ struct ContentView: View {
 
         func updateUIView(_ uiView: UIView, context: Context) {}
     }
+    #endif
 
     private func openInExternalApp(_ bookmark: VideoBookmark) {
         guard let webURL = URL(string: bookmark.url) else { return }

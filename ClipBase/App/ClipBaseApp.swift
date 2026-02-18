@@ -1,15 +1,19 @@
 import SwiftUI
 import SwiftData
 import WebKit
+#if !targetEnvironment(macCatalyst)
 import GoogleMobileAds
+#endif
 
 @main
 struct ClipBaseApp: App {
     @State private var showSplash = true
 
     init() {
+        #if !targetEnvironment(macCatalyst)
         // AdMob SDK を初期化
         AdManager.shared.configure()
+        #endif
 
         // WebKit をバックグラウンドでプリロード（初回表示の遅延を解消）
         DispatchQueue.main.async {
